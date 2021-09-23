@@ -12,6 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use('/api/auth', require('./routes/auth'));
+app.use('/api/party', require('./routes/party'));
 
 app.listen( 4000, () => {
     for (let index = 0; index < 5; index++) {

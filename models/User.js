@@ -12,7 +12,21 @@ const UserSchema = Schema({
     },
     profileimg: {
         type: String,
-        required: true
+    },
+    wins: {
+        type: Number,
+    },
+    losses: {
+        type: Number,
+    },
+    versuswin: {
+        type: Number,
+    },
+    grupwin: {
+        type: Number,
+    },
+    score: {
+        type: Number,
     }
 });
 

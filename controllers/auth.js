@@ -28,7 +28,14 @@ const CreateUser = async(req, res = response) => {
             status: true,
             id: user.id,
             name: user.name,
-            tokenAccess
+            tokenAccess,
+            stats: {
+                wins: 0,
+                losses: 0,
+                versuswin: 0,
+                grupwin: 0,
+                score: 0,
+            }
         })
 
     } catch (error) {
@@ -69,7 +76,14 @@ const LoginUser = async(req, res = response) => {
             status: true,
             id: user.id,
             name: user.name,
-            tokenAccess
+            tokenAccess,
+            stats: {
+                wins: user.wins,
+                losses: user.losses,
+                versuswin: user.versuswin,
+                grupwin: user.grupwin,
+                score: user.score,
+            }
         })
 
 
@@ -102,7 +116,15 @@ const LoginUserGoogle = async(req, res = response) => {
                 status: true,
                 id: user.id,
                 name: user.name,
-                tokenAccess
+                profileimg: user.profileimg,
+                tokenAccess,
+                stats: {
+                    wins: user.wins,
+                    losses: user.losses,
+                    versuswin: user.versuswin,
+                    grupwin: user.grupwin,
+                    score: user.score,
+                }
             })
             return;
         }
@@ -122,7 +144,14 @@ const LoginUserGoogle = async(req, res = response) => {
             status: true,
             id: user.id,
             name: user.name,
-            tokenAccess
+            tokenAccess,
+            stats: {
+                wins: user.wins,
+                losses: user.losses,
+                versuswin: user.versuswin,
+                grupwin: user.grupwin,
+                score: user.score,
+            }
         })
 
 
