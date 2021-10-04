@@ -22,7 +22,23 @@ const PartySchema = Schema({
     },
     statusServer: {
         type: Boolean
-    }
+    },
+    id: {
+        type: Number,
+        // required: true
+    },
+    name: {
+        type: String,
+        // require: true
+    },
+    profileimg: {
+        type: String
+    },
+    users: [{
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        // required: true
+    }]
 });
 
 
