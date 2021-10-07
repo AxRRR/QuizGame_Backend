@@ -30,8 +30,8 @@ const CreateParty = async(req, res = response) => {
             players,
             timeQuestions
         });
-        PartyCode.users = req.body.dataUser.id;
         let PartySave = await PartyCode.save();
+        PartySave.id = PartySave._id;
         
         const PartyCodeUpdate = new PartyUsers({
             PartyCode: partycode,
@@ -40,9 +40,13 @@ const CreateParty = async(req, res = response) => {
         PartyCodeUpdate.Users = dataUser.id;
         await PartyCodeUpdate.save();
 
+        let UsersList = await PartyUsers.findOne(PartySave._id).populate('Users', 'name');
+        const { Users } = UsersList; 
+
         res.status(201).json({
             status: true,
-            PartySave
+            PartySave,
+            Users
         });
 
     } catch (error) {
@@ -59,6 +63,8 @@ const JoinParty = async(req, res = response) => {
 
     try {
         let ValidPartyCode = await Party.findOne({ partycode });
+
+        console.log('Aca es el Validpartycode', Party)
 
         if(!ValidPartyCode){
             return res.status(400).json({

@@ -24,7 +24,7 @@ const PartySchema = Schema({
         type: Boolean
     },
     id: {
-        type: Number,
+        type: String,
         // required: true
     },
     name: {
