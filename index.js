@@ -12,6 +12,7 @@ const io = require("socket.io")(http, {
 });
 const Party = require('./models/Party');
 const PartyUsers = require('./models/PartyUsers');
+const User = require('./models/User');
 
 dbConnection();
 
@@ -23,16 +24,32 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/party', require('./routes/party'));
 
 io.on('connection', (socket) => {
-    socket.on('join', async(arg) => {
-        console.log(arg);
-        let PartySave = await Party.findOne({ arg });
-        let UsersList = await PartyUsers.findOne(PartySave._id).populate('Users', 'name');
-        const { Users } = UsersList; 
-        // io.emit('userlist', 'El retorno es este: ' + arg)
-        io.emit('userlist', JSON.stringify({Users}));
-        io.emit('userlist', () => {
-            JSON.stringify({Users})
-        });
+    socket.on('join', async(PartyCode, isInPartyUser, PartyId) => {
+        console.log(PartyCode, isInPartyUser, PartyId);
+
+        if(isInPartyUser === false){
+            return console.log('El isInParty es false, return.')
+        }
+
+        const PartyUserSaved = await User.findOne({ inpartyid: PartyId });
+        console.log('if PartyUserSaved ===' + PartyUserSaved.inpartyid + ' el valor es: ' + PartyId)
+        if(PartyUserSaved.inpartyid == PartyId){
+            // let UsersList = await PartyUsers.findOne({ PartyCode }).populate('Users', 'name');
+            let PartySave = await Party.findOne({ partycode: PartyCode });
+            let UsersList = await PartyUsers.findOne(PartySave._id).populate('Users', 'name');
+            const { Users } = UsersList; 
+
+            io.emit('userlist', JSON.stringify({Users}));
+            // io.emit('userlist', () => {
+            //     JSON.stringify({Users})
+            // });
+
+            console.log('El userList queda asi: ', Users)
+        }
+        else {
+            console.log('El partyid del user no coniciden')
+        }
+       
     });
 });
 

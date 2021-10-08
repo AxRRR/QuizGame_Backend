@@ -10,6 +10,13 @@ const UserSchema = Schema({
         type: String,
         required: true
     },
+    inparty: {
+        type: Boolean
+    },
+    inpartyid: { 
+        type: Schema.Types.ObjectId, 
+        ref: 'Party' 
+    },
     profileimg: {
         type: String,
     },

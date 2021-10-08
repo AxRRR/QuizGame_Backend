@@ -1,6 +1,7 @@
 const { response } = require('express');
 const Party = require('../models/Party');
 const PartyUsers = require('../models/PartyUsers');
+const User = require('../models/User');
 
 const CreateParty = async(req, res = response) => {
     const { 
@@ -11,6 +12,7 @@ const CreateParty = async(req, res = response) => {
     } = req.body;
     const partycode = Math.random().toString(19).slice(-8).toUpperCase();
 
+    console.log('El body que recibimos', req.body)
     try {
         let PartyCode = await Party.findOne({ partycode });
 
@@ -22,6 +24,9 @@ const CreateParty = async(req, res = response) => {
         }
 
         let { dataUser } = req.body;
+        let { name, id } = dataUser;
+
+        console.log('El name y el id que recigbimos', name, id)
         
         PartyCode = new Party({
             partycode, 
@@ -33,6 +38,8 @@ const CreateParty = async(req, res = response) => {
         let PartySave = await PartyCode.save();
         PartySave.id = PartySave._id;
         
+        const userData = await User.findOneAndUpdate({ name }, { inparty: true, inpartyid: PartySave.id });
+
         const PartyCodeUpdate = new PartyUsers({
             PartyCode: partycode,
             Party: PartySave._id
@@ -40,13 +47,14 @@ const CreateParty = async(req, res = response) => {
         PartyCodeUpdate.Users = dataUser.id;
         await PartyCodeUpdate.save();
 
-        let UsersList = await PartyUsers.findOne(PartySave._id).populate('Users', 'name');
+        let UsersList = await PartyUsers.findOne({ PartyCode: partycode }).populate('Users', 'name');
         const { Users } = UsersList; 
 
         res.status(201).json({
             status: true,
             PartySave,
-            Users
+            Users,
+            userData
         });
 
     } catch (error) {
@@ -61,10 +69,12 @@ const CreateParty = async(req, res = response) => {
 const JoinParty = async(req, res = response) => {
     const { partycode } = req.body;
 
+    console.log(req.body)
+
     try {
         let ValidPartyCode = await Party.findOne({ partycode });
 
-        console.log('Aca es el Validpartycode', Party)
+        console.log('Aca es el Validpartycode', ValidPartyCode)
 
         if(!ValidPartyCode){
             return res.status(400).json({
@@ -73,7 +83,9 @@ const JoinParty = async(req, res = response) => {
             });
         }
 
-        const PartyUpdate = await PartyUsers.findOne({ partycode });
+        const PartyUpdate = await PartyUsers.findOne({ PartyCode: partycode });
+
+        console.log('Aca es el PartyUsers', PartyUpdate)
 
         if(!PartyUpdate){
             return res.status(400).json({
@@ -82,12 +94,16 @@ const JoinParty = async(req, res = response) => {
             });
         }
 
-        const { id } = req.body;
+        const { id, name } = req.body;
         await PartyUpdate.Users.push(id);
         await PartyUpdate.save();
         let PartySave = await Party.findOne({ partycode });
-        let UsersList = await PartyUsers.findOne(PartySave._id).populate('Users', 'name');
+        console.log('Aca es el buscar por partycode, PartySave', PartySave)
+        const userData = await User.findOneAndUpdate({ name }, { inparty: true, inpartyid: PartySave.id });
+        console.log('El Userdata', userData)
+        let UsersList = await PartyUsers.findOne({ PartyCode: partycode }).populate('Users', 'name');
         const { Users } = UsersList; 
+        console.log('Aca es el UserList', Users)
 
 
         res.status(200).json({

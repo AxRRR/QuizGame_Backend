@@ -76,6 +76,8 @@ const LoginUser = async(req, res = response) => {
             status: true,
             id: user.id,
             name: user.name,
+            inparty: user.inparty,
+            inpartyid: user.inpartyid,
             tokenAccess,
             stats: {
                 wins: user.wins,
